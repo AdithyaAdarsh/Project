@@ -1,12 +1,15 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_PRODUCTS_BY_CATEGORY } from './config';
+import { GET_PRODUCTS_BY_CATEGORY, GET_ALL_PRODUCTS } from './config';
 import './Products.css'; // Import your custom CSS for styling
 
 function Products({ categoryId }) {
-  const { loading, error, data } = useQuery(GET_PRODUCTS_BY_CATEGORY, {
-    variables: { categoryId },
-  });
+    const { loading, error, data } = useQuery(
+      categoryId ? GET_PRODUCTS_BY_CATEGORY : GET_ALL_PRODUCTS,
+      {
+        variables: { categoryId },
+      }
+    );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
@@ -20,7 +23,11 @@ function Products({ categoryId }) {
           {products.map(({ node }) => (
             <li key={node.id} className="product">
               <div className="product-image">
-                <img src={node.images[0].url} alt={node.name} />
+                {node.images.length > 0 ? (
+                  <img src={node.images[0].url} alt={node.name} />
+                ) : (
+                  <p>No image available</p>
+                )}
               </div>
               <div className="product-details">
                 <h3>{node.name}</h3>
